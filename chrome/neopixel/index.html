@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <!-- Origin Trial Token, feature = Web Bluetooth, origin = https://don.github.io, expires = 2016-11-07 -->
+        <meta http-equiv="origin-trial" data-feature="Web Bluetooth" data-expires="2016-11-07" content="AuRfakJfW3hBEYiYVjMhqgO6SBP5FzLM8I57Yuif2yXZMl326mqUiHcAWMpqAiyKnXS+ws/5nqXbYHx+T5Adhg4AAABYeyJvcmlnaW4iOiAiaHR0cHM6Ly9kb24uZ2l0aHViLmlvOjQ0MyIsICJmZWF0dXJlIjogIldlYkJsdWV0b290aCIsICJleHBpcnkiOiAxNDc4NTMyOTg0fQ==">
+        <link rel="stylesheet" href="index.css">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1,
+         user-scalable=no, width=device-width">
+         <title>Bluetooth NeoPixel</title>
+    </head>
+
+    <body>
+        <div>
+            <button id="startButton">Start</button>
+            <br/>
+        </div>
+
+        <div id="controlsDiv">
+            <label for="red">Red</label><br/>
+            <input type="range" id="red" min="0" value="0" max="255" step="5" />
+            <br/>
+
+            <label for="green">Green</label><br/>
+            <input type="range" id="green" min="0" value="0" max="255" step="5" />
+            <br/>
+
+            <label for="blue">Blue</label><br/>
+            <input type="range" id="blue" min="0" value="0" max="255" step="5" />
+            <br/>
+
+            <label for="brightness">Brightness</label><br/>
+            <input type="range" id="brightness" min="0" value="255" max="255" step="5" />
+            <br/>
+
+            <label for="powerswitch">Power</label>
+                <input type="checkbox" id="powerswitch"/>
+            <br/>
+
+            <button id="disconnectButton">Disconnect</button>
+        </div>
+
+        <div id="output" class="output">
+            <div id="content"></div>
+            <div id="status"></div>
+            <pre id="log"></pre>
+        </div>
+
+        <script type="text/javascript" src="chromeSamples.js"></script>
+        <script type="text/javascript" src="index.js"></script>
+    </body>
+</html>
