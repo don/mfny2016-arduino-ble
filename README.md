@@ -7,3 +7,5 @@ http://makerfaire.com/maker/entry/58410
 Slides: http://don.github.io/slides/2016-10-01-arduino-ble/
 
 For NeoPixel code see https://github.com/MakeBluetooth/ble-neopixel
+
+Web Bluetooth NeoPixel demo https://don.github.io/mfny2016-arduino-ble/neopixel
