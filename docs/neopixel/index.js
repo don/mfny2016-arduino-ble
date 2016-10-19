@@ -11,7 +11,7 @@ document.querySelector('#startButton').addEventListener('click', function(event)
 var bluetoothDevice;
 var colorCharacteristic;
 var brightnessCharacteristic;
-var powerSwitchCharateristic;
+var powerSwitchCharacteristic;
 var log = ChromeSamples.log;
 
 document.querySelector('#controlsDiv').hidden = true;
@@ -43,9 +43,9 @@ function onPowerSwitchChange(event) {
   let checked = event.target.checked;
 
   if (checked) {
-    powerSwitchCharateristic.writeValue(new Uint8Array([1]));
+    powerSwitchCharacteristic.writeValue(new Uint8Array([1]));
   } else {
-    powerSwitchCharateristic.writeValue(new Uint8Array([0]));
+    powerSwitchCharacteristic.writeValue(new Uint8Array([0]));
   }
 }
 
@@ -53,7 +53,7 @@ function onStartButtonClick() {
   let serviceUuid = BluetoothUUID.getCharacteristic(0xCCC0);
   let colorCharacteristicUuid = BluetoothUUID.getCharacteristic(0xCCC1);
   let brightnessCharacteristicUuid = BluetoothUUID.getCharacteristic(0xCCC2);
-  let powerSwitchCharateristicUuid = BluetoothUUID.getCharacteristic(0xCCC3);
+  let powerSwitchCharacteristicUuid = BluetoothUUID.getCharacteristic(0xCCC3);
   
   log('Requesting Bluetooth Device...');
   navigator.bluetooth.requestDevice({filters: [{services: [serviceUuid]}]})
@@ -69,11 +69,12 @@ function onStartButtonClick() {
     return server.getPrimaryService(serviceUuid);
   })
   .then(service => {
-    log('Getting Characteristic...');
+    log('Getting Characteristics...');
     return service.getCharacteristics();
   })
   .then(characteristics => {
-
+    let queue = Promise.resolve();
+      
     // save references to the characteristics we care about
     characteristics.forEach(c => {
 
@@ -81,28 +82,31 @@ function onStartButtonClick() {
         case colorCharacteristicUuid:
           log('Color Characteristic');
           colorCharacteristic = c;          
-          colorCharacteristic.readValue().then(updateColorSliders);
+          queue = queue.then(_ => colorCharacteristic.readValue().then(updateColorSliders));
           break;
         
         case brightnessCharacteristicUuid:
           log('Brightness Characteristic');
           brightnessCharacteristic = c;
-          brightnessCharacteristic.readValue().then(updateBrightnessSlider);
+          queue = queue.then(_ => brightnessCharacteristic.readValue().then(updateBrightnessSlider));
           break;
 
-        case powerSwitchCharateristicUuid:
+        case powerSwitchCharacteristicUuid:
           log('Power Switch Characteristic');
-          powerSwitchCharateristic = c;
-          powerSwitchCharateristic.startNotifications().then(_ => {
-            log('Power Switch Notifications started');
-            powerSwitchCharateristic.addEventListener('characteristicvaluechanged', powerSwitchCharacteristicChanged);
+          powerSwitchCharacteristic = c;
+          queue = queue.then(_ => function() {
+            return powerSwitchCharacteristic.startNotifications().then(_ => {
+              log('Power Switch Notifications started');
+              powerSwitchCharacteristic.addEventListener('characteristicvaluechanged', powerSwitchCharacteristicChanged);
+              return powerSwitchCharacteristic.readValue().then(updatePowerSwitch);
+            });
           });
-          powerSwitchCharateristic.readValue().then(updatePowerSwitch);
           break;
         
         default:
           log('Skipping ' + c.uuid);
       }
+      return queue;
     });
   })
   .catch(error => {
